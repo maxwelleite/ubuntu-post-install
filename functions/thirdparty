@@ -17,9 +17,62 @@ echo 'r. Return'
 echo ''
 show_info 'Enter your choice:' && read REPLY
 case $REPLY in
+# BleachBit
 1)
     echo 'Installing BleachBit...'
     sudo apt-get install -y bleachbit
+    show_success 'Done.'
+    thirdparty
+    ;;
+### Driver Intel For [12.04/12.10/13.04/13.10] (Official)
+# Source: https://01.org/linuxgraphics/downloads
+1)
+    # Add repository
+    echo 'Adding Intel Driver Repository to software sources...'
+    sudo sh -c 'echo "deb https://download.01.org/gfx/ubuntu/14.04/main/ trusty main" > /etc/apt/sources.list.d/intellinuxgraphics.list'
+
+    # Add Authentication keys
+    echo 'Adding authentication keys...'
+    wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O - | sudo apt-key add -
+
+    # Update repository information
+    echo 'Updating repository information...'
+    sudo apt-get update
+    # Install
+    echo 'Installing Google Chrome...'
+    sudo apt-get -y upgrade
+    sudo apt-get -y dist-upgrade
+    show_success 'Done.'
+    thirdparty
+    ;;
+
+
+    echo 'Downloading Intel Driver...'
+    # Download Debian file that matches system architecture
+    case `uname -i` in
+        i386|i486|i586|i686)
+            wget -O /tmp/intel-linux-graphics-installer.deb https://download.01.org/gfx/ubuntu/14.04/main/pool/main/i/intel-linux-graphics-installer/intel-linux-graphics-installer_1.0.7-0intel1_amd64.deb
+            ;;
+        x86_64)
+            wget -O /tmp/intel-linux-graphics-installer.deb https://download.01.org/gfx/ubuntu/14.04/main/pool/main/i/intel-linux-graphics-installer/intel-linux-graphics-installer_1.0.7-0intel1_i386.deb
+            ;;
+        *)
+            show_error "Couldn't find a download that matches your system." && thirdparty
+            ;;
+    esac
+    # Add Authentication keys
+    echo 'Adding authentication keys...'
+    wget --no-check-certificate https://download.01.org/gfx/RPM-GPG-KEY-ilg -O - | sudo apt-key add -
+    # Install package(s)
+    echo 'Installing Intel Driver...'
+    sudo apt-get install ttf-ancient-fonts -y
+    sudo dpkg -i /tmp/intel-linux-graphics-installer.deb
+    sudo apt-get install -fy
+    echo 'Starting Intel Driver Installer... Follow their steps'
+    sudo intel-linux-graphics-installer
+    # Cleanup and finish
+    echo 'Installing Intel Driver...'
+    rm /tmp/intel-linux-graphics-installer.deb
     show_success 'Done.'
     thirdparty
     ;;
@@ -27,7 +80,6 @@ case $REPLY in
 1) 
     # Add repository
     echo 'Adding Google Chrome Repository to software sources...'
-    show_info 'Requires root privileges:'
     sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 
     # Add Authentication keys
